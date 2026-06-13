@@ -40,9 +40,28 @@ function hideError() {
 
 // ── Data loading ──────────────────────────────────────────────────────────────
 
+function renderSkeleton() {
+  const grid = document.getElementById('dashboard-grid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({ length: 3 }, () => `
+    <div class="skeleton-card">
+      <div class="skel-header">
+        <div class="skel-avatar" style="width:32px;height:32px;border-radius:4px"></div>
+        <div style="flex:1">
+          <div class="skel-line" style="width:60%"></div>
+          <div class="skel-line" style="width:30%"></div>
+        </div>
+      </div>
+      <div class="skel-line" style="margin-top:.5rem"></div>
+      <div class="skel-line" style="width:80%"></div>
+      <div class="skel-line" style="width:60%"></div>
+    </div>`).join('');
+}
+
 async function loadData(refresh = false) {
   setStatus('loading', 'Loading…');
   hideError();
+  renderSkeleton();
 
   const cached  = getCachedData();
   let matches   = cached ? cached.matches : null;

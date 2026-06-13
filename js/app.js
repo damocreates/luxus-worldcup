@@ -31,9 +31,28 @@ function hideError() {
 
 // ── Data loading ──────────────────────────────────────────────────────────────
 
+function renderSkeleton() {
+  const grid = document.getElementById('cards-grid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({ length: 6 }, () => `
+    <div class="skeleton-card">
+      <div class="skel-header">
+        <div class="skel-avatar"></div>
+        <div style="flex:1">
+          <div class="skel-line" style="width:55%"></div>
+          <div class="skel-line" style="width:35%"></div>
+        </div>
+      </div>
+      <div class="skel-line" style="margin-top:.5rem"></div>
+      <div class="skel-line" style="width:75%"></div>
+      <div class="skel-line" style="width:55%"></div>
+    </div>`).join('');
+}
+
 async function loadData(refresh = false) {
   setStatus('loading', 'Loading…');
   hideError();
+  renderSkeleton();
 
   // Always pre-load cache so Refresh also has a fallback if the fetch fails
   const cached = getCachedData();

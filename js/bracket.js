@@ -366,6 +366,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('refresh-btn').addEventListener('click', () => loadData(true));
 
+  // Preview flags toggle
+  const toggleBtn = document.getElementById('toggle-potentials');
+  let showPotentials = true;
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      showPotentials = !showPotentials;
+      document.getElementById('bracket-wrap').classList.toggle('no-potentials', !showPotentials);
+      toggleBtn.textContent = showPotentials ? 'Hide preview flags' : 'Show preview flags';
+    });
+  }
+
+  // Scroll hint — hide once user scrolls
+  const scrollArea = document.querySelector('.bracket-scroll');
+  const scrollHint = document.getElementById('scroll-hint');
+  if (scrollArea && scrollHint) {
+    scrollArea.addEventListener('scroll', function handler() {
+      if (scrollArea.scrollLeft > 20) {
+        scrollHint.classList.add('hidden');
+        scrollArea.removeEventListener('scroll', handler);
+      }
+    }, { passive: true });
+  }
+
   window.addEventListener('resize', () => {
     requestAnimationFrame(() => requestAnimationFrame(drawLines));
   });

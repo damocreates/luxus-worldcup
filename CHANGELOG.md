@@ -6,6 +6,43 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.0] — 2026-06-13
+
+### Added
+
+#### Leaderboard (`leaderboard.html`)
+- Full standings table for all 23 participants, sorted by points (then wins, then name)
+- Gold / silver / bronze medals for top 3 ranks
+- Coloured avatar initial next to each participant name
+- Team flag row with eliminated teams greyed out and desaturated
+- Points, W/D/L match record, and teams-alive count columns
+- Stat columns hidden on mobile to keep table readable
+
+#### Group standings (`groups.html`)
+- Live standings table for all 12 groups (A–L), driven by match data
+- Columns: Team, P, W, D, L, GF, GA, GD, Pts
+- Row colour coding: green (top 2 — auto qualify), amber (3rd — potential best 3rd), no highlight (4th — eliminated)
+- Sweepstake owner badge next to each team name
+- Colour key legend above the grid
+- Responsive auto-fill grid (min 320 px per group table)
+
+#### PWA support
+- `manifest.json`: installable app — name "Luxus WC 2026", theme/background `#0e1b2e`, standalone display
+- `sw.js`: service worker — network-first for the scores API, cache-first for all static assets and CDN resources; pre-caches all pages on install; cleans stale caches on activate
+- `generate-icons.html`: developer tool that draws 192 × 192 and 512 × 512 trophy icons on canvas and provides download buttons; place outputs in `icons/` folder
+- Apple PWA meta tags on all pages (`apple-mobile-web-app-capable`, status bar style, apple-touch-icon)
+- Service worker registration script added to all pages
+
+#### General polish
+- Skeleton loading state: grey shimmer placeholder cards shown in grids while data is being fetched, replacing blank space
+- Smooth card load-in: `cardIn` fade-up animation on `.person-card` and `.team-card`, with staggered delay up to 12 items
+- Bracket: **Hide / Show preview flags** toggle button next to the status bar
+- Bracket: scroll-hint text below the bracket on mobile viewports, hidden once the user scrolls
+- Nav updated to five links on all pages: **My Teams · Tracker · Bracket · Groups · Leaderboard**; wraps gracefully on mobile
+- `js/api.js`: `getTeamRecord()` and `isTeamEliminated()` added as shared utilities
+
+---
+
 ## [0.2.0] — 2026-06-13
 
 ### Added

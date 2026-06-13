@@ -267,6 +267,50 @@ function getTeamGroup(teamName, matches) {
   return null;
 }
 
+// ── Team record & elimination ─────────────────────────────────────────────────
+
+function getTeamRecord(teamName, matches, standings, byNum) {
+  let wins = 0, draws = 0, losses = 0;
+  for (const match of matches) {
+    let isTeam1;
+    if (match.group) {
+      if (normalizeTeamName(match.team1) === teamName) isTeam1 = true;
+      else if (normalizeTeamName(match.team2) === teamName) isTeam1 = false;
+      else continue;
+    } else if (KNOCKOUT_ROUNDS.includes(match.round)) {
+      const r1 = resolveTeam(match.team1, standings, byNum);
+      const r2 = resolveTeam(match.team2, standings, byNum);
+      if (r1 === teamName) isTeam1 = true;
+      else if (r2 === teamName) isTeam1 = false;
+      else continue;
+    } else continue;
+    if (!match.score || !match.score.ft) continue;
+    const result = getMatchResult(match, isTeam1);
+    if (result === 'win') wins++;
+    else if (result === 'draw') draws++;
+    else if (result === 'loss') losses++;
+  }
+  return { wins, draws, losses };
+}
+
+function isTeamEliminated(teamName, matches, standings, byNum) {
+  for (const match of matches) {
+    if (!KNOCKOUT_ROUNDS.includes(match.round)) continue;
+    const r1 = resolveTeam(match.team1, standings, byNum);
+    const r2 = resolveTeam(match.team2, standings, byNum);
+    if (r1 !== teamName && r2 !== teamName) continue;
+    if (!match.score || !match.score.ft) continue;
+    if (getMatchResult(match, r1 === teamName) === 'loss') return true;
+  }
+  for (const rows of Object.values(standings)) {
+    const idx = rows.findIndex(r => r.team === teamName);
+    if (idx < 0) continue;
+    if (rows.every(r => r.played >= 3) && idx >= 3) return true;
+    break;
+  }
+  return false;
+}
+
 // ── Fetch / cache ─────────────────────────────────────────────────────────────
 
 async function fetchWorldCupData() {

@@ -9,6 +9,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0e1b2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Luxus WC">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 
@@ -18,8 +24,10 @@
       <div class="site-title">⚽ <span>Luxus WC 2026</span></div>
       <nav>
         <a href="dashboard.html" class="active">My Teams</a>
-        <a href="index.html">Company Tracker</a>
+        <a href="index.html">Tracker</a>
         <a href="bracket.html">Bracket</a>
+        <a href="groups.html">Groups</a>
+        <a href="leaderboard.html">Leaderboard</a>
       </nav>
       <div class="nav-user">
         <span class="nav-user-name" id="nav-name"></span>
@@ -54,8 +62,10 @@
     <div class="footer-inner">
       <span id="version-display"></span>
       <nav style="margin:0">
-        <a href="index.html">Company Tracker</a>
+        <a href="index.html">Tracker</a>
         <a href="bracket.html">Bracket</a>
+        <a href="groups.html">Groups</a>
+        <a href="leaderboard.html">Leaderboard</a>
       </nav>
     </div>
   </div>
@@ -67,5 +77,10 @@
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/dashboard.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
 </body>
 </html>
