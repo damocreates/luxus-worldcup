@@ -117,6 +117,24 @@ function renderDashboard() {
   grid.innerHTML = teams.length
     ? teams.map(team => renderTeamCard(team)).join('')
     : '<div class="empty-state">No teams assigned — contact the sweepstake organiser.</div>';
+
+  // Also Watching section
+  const watchingSection = document.getElementById('watching-section');
+  if (watchingSection) {
+    try {
+      const watching   = JSON.parse(localStorage.getItem(WATCHING_KEY) || '[]');
+      const extraTeams = watching.filter(t => !teams.includes(t));
+      if (extraTeams.length) {
+        watchingSection.innerHTML =
+          `<h2 class="section-heading">Also Watching</h2>
+           <div class="cards-grid">${extraTeams.map(t => renderTeamCard(t)).join('')}</div>`;
+      } else {
+        watchingSection.innerHTML = '';
+      }
+    } catch (_) {
+      watchingSection.innerHTML = '';
+    }
+  }
 }
 
 function renderTeamCard(team) {

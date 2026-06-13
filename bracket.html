@@ -33,7 +33,19 @@
         <span class="nav-user-name" id="nav-name"></span>
         <a href="#" id="nav-logout" class="nav-logout">Not you?</a>
       </div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
+    <nav class="nav-drawer" id="nav-drawer">
+      <a href="dashboard.html">My Teams</a>
+      <a href="index.html">Tracker</a>
+      <a href="bracket.html" class="active">Bracket</a>
+      <a href="groups.html">Groups</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <div class="nav-drawer-user">
+        <span class="nav-drawer-name" id="nav-drawer-name"></span>
+        <a href="#" id="nav-drawer-logout" class="nav-logout">Sign out</a>
+      </div>
+    </nav>
   </div>
 </header>
 
@@ -120,6 +132,7 @@
 <script src="js/data.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/bracket.js"></script>
 <script>
   if ('serviceWorker' in navigator) {

@@ -6,6 +6,26 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.1] — 2026-06-13
+
+### Fixed
+
+#### Mobile nav bar
+- "Luxus WC 2026" title now correctly centred on mobile — hamburger button is absolutely positioned at the right edge so the title occupies the full width and sits dead-centre
+- Raised mobile nav breakpoint from 700 px to 768 px to cover all common phone and small-tablet widths
+
+#### Mobile bracket
+- Removed nested `overflow-x: auto` from `.bracket-page main` that was creating a second scroll container and producing duplicate scrollbars
+- Added `overflow-y: clip` to `.bracket-scroll` to prevent the browser promoting the container to an `overflow-y: auto` scroll box
+- Added `-webkit-overflow-scrolling: touch` for smooth momentum scrolling on iOS and Android
+
+#### General mobile polish
+- Settings drawer expanded to full viewport width on screens ≤ 768 px
+- Upcoming fixtures banner (`welcome.html`) given `-webkit-overflow-scrolling: touch` for smooth swipe scrolling on iOS
+- Bracket spacing and card sizing improved (cards ≥ 200 px wide, 40 px column gaps, 150 px slot height) for comfortable mobile browsing
+
+---
+
 ## [0.3.0] — 2026-06-13
 
 ### Added
