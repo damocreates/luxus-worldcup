@@ -375,14 +375,14 @@ footer a:hover { color: var(--text-dim); }
    BRACKET PAGE
    ════════════════════════════════════════════════════════════════════════════ */
 
-.bracket-page main { padding: 1.5rem 0 2rem; overflow-x: auto; }
+.bracket-page main { padding: 1.5rem 0 2rem; }
 
 /* Round headers row */
 .bracket-round-headers {
   display: flex;
   gap: 0;
   margin-bottom: .5rem;
-  min-width: 1100px;
+  min-width: 2200px;
 }
 
 .bracket-round-header {
@@ -393,10 +393,10 @@ footer a:hover { color: var(--text-dim); }
   letter-spacing: .06em;
   text-transform: uppercase;
   color: var(--muted);
-  padding: .3rem 4px;
+  padding: .4rem 8px;
 }
 
-/* Bracket outer scroll wrapper */
+/* Bracket outer scroll wrapper — sole horizontal scroll container */
 .bracket-scroll {
   overflow-x: auto;
   padding-bottom: 1rem;
@@ -406,8 +406,8 @@ footer a:hover { color: var(--text-dim); }
 .bracket-wrap {
   display: flex;
   align-items: stretch;
-  gap: 0;
-  min-width: 1100px;
+  gap: 16px;
+  min-width: 2200px;
   position: relative;
 }
 
@@ -423,7 +423,7 @@ footer a:hover { color: var(--text-dim); }
 .bracket-half {
   display: flex;
   flex: 1;
-  gap: 0;
+  gap: 40px;
 }
 
 /* right half: columns read left→right as SF QF R16 R32 (same as DOM order) */
@@ -434,7 +434,8 @@ footer a:hover { color: var(--text-dim); }
   flex-direction: column;
   justify-content: space-around;
   flex: 1;
-  padding: 0 4px;
+  min-width: 200px;
+  padding: 0 8px;
 }
 
 /* Slot = vertical space allocated per match in this round */
@@ -446,14 +447,14 @@ footer a:hover { color: var(--text-dim); }
 
 /* Center column: Final + 3rd place */
 .bracket-center {
-  width: 180px;
+  width: 220px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  padding: 0 4px;
-  gap: 12px;
+  padding: 0 8px;
+  gap: 16px;
 }
 
 /* ── Bracket match card ─────────────────────────────────────────────────────── */
@@ -473,7 +474,7 @@ footer a:hover { color: var(--text-dim); }
 
 .bm-header {
   background: var(--card-hdr);
-  padding: .3rem .6rem;
+  padding: .4rem .75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -491,13 +492,13 @@ footer a:hover { color: var(--text-dim); }
 .bm-team {
   display: flex;
   align-items: center;
-  gap: .4rem;
-  padding: .35rem .6rem;
-  font-size: .8rem;
+  gap: .5rem;
+  padding: .45rem .75rem;
+  font-size: .82rem;
   font-weight: 500;
   border-bottom: 1px solid var(--border);
   transition: background .1s;
-  min-height: 32px;
+  min-height: 36px;
 }
 
 .bm-team:last-child { border-bottom: none; }
@@ -515,14 +516,24 @@ footer a:hover { color: var(--text-dim); }
   margin-left: 2px;
 }
 
-/* Potential team flags preview */
+/* Potential team flags preview — single row, max 8 flags + overflow label */
 .bm-potentials {
-  padding: .35rem .6rem;
+  padding: .35rem .75rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
   border-top: 1px solid var(--border);
   background: rgba(14,27,46,.4);
+  overflow: hidden;
+}
+
+.bm-potentials-more {
+  font-size: .65rem;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 2px;
 }
 
 .bm-potential-flag {

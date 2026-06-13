@@ -1,7 +1,7 @@
 // ── Knockout Bracket page ─────────────────────────────────────────────────────
 
-const SLOT_PX   = 90;           // height (px) of one R32 slot
-const TOTAL_PX  = SLOT_PX * 8; // 720 px — total column height
+const SLOT_PX   = 150;          // height (px) of one R32 slot
+const TOTAL_PX  = SLOT_PX * 8; // 1200 px — total column height
 
 let bracketState = {
   matches:   [],
@@ -167,16 +167,20 @@ function renderMatchCard(match, isFinal) {
     return `<div class="${rowClass}">${flagImg}<span class="bm-team-name">${dispName}</span>${ownerDot}${scoreHtml}</div>`;
   }
 
-  // Potential flags for unresolved slots
+  // Potential flags for unresolved slots — max 8 shown, rest as "+N more"
   function potentialFlags(code, resolved) {
     if (resolved) return '';
     const teams = getPotentialTeams(code, standings, byNum);
     if (!teams.length) return '';
-    const imgs = teams.map(t => {
+    const MAX = 8;
+    const shown = teams.length > MAX ? teams.slice(0, MAX - 1) : teams;
+    const extra = teams.length - shown.length;
+    const imgs = shown.map(t => {
       const url = getFlagUrl(t, '20x15');
       return url ? `<img src="${url}" width="20" height="15" class="bm-potential-flag" title="${escHtml(t)}" loading="lazy">` : '';
     }).filter(Boolean).join('');
-    return imgs ? `<div class="bm-potentials">${imgs}</div>` : '';
+    const moreLabel = extra > 0 ? `<span class="bm-potentials-more">+${extra} more</span>` : '';
+    return imgs ? `<div class="bm-potentials">${imgs}${moreLabel}</div>` : '';
   }
 
   const potentials = potentialFlags(code1, res1) + potentialFlags(code2, res2);
