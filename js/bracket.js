@@ -1,7 +1,7 @@
 // ── Knockout Bracket page ─────────────────────────────────────────────────────
 
-const SLOT_PX   = 150;          // height (px) of one R32 slot
-const TOTAL_PX  = SLOT_PX * 8; // 1200 px — total column height
+const SLOT_PX   = 175;          // height (px) of one R32 slot
+const TOTAL_PX  = SLOT_PX * 8; // 1400 px — total column height
 
 let bracketState = {
   matches:   [],
@@ -167,14 +167,15 @@ function renderMatchCard(match, isFinal) {
     return `<div class="${rowClass}">${flagImg}<span class="bm-team-name">${dispName}</span>${ownerDot}${scoreHtml}</div>`;
   }
 
-  // Potential flags for unresolved slots — max 8 shown, rest as "+N more"
-  function potentialFlags(code, resolved) {
-    if (resolved) return '';
-    const teams = getPotentialTeams(code, standings, byNum);
-    if (!teams.length) return '';
+  // Potential flags — both unresolved teams combined into one row, max 8 total
+  function potentialFlags() {
+    const t1 = res1 ? [] : getPotentialTeams(code1, standings, byNum);
+    const t2 = res2 ? [] : getPotentialTeams(code2, standings, byNum);
+    const all = [...new Set([...t1, ...t2])];
+    if (!all.length) return '';
     const MAX = 8;
-    const shown = teams.length > MAX ? teams.slice(0, MAX - 1) : teams;
-    const extra = teams.length - shown.length;
+    const shown = all.length > MAX ? all.slice(0, MAX - 1) : all;
+    const extra = all.length - shown.length;
     const imgs = shown.map(t => {
       const url = getFlagUrl(t, '20x15');
       return url ? `<img src="${url}" width="20" height="15" class="bm-potential-flag" title="${escHtml(t)}" loading="lazy">` : '';
@@ -183,7 +184,7 @@ function renderMatchCard(match, isFinal) {
     return imgs ? `<div class="bm-potentials">${imgs}${moreLabel}</div>` : '';
   }
 
-  const potentials = potentialFlags(code1, res1) + potentialFlags(code2, res2);
+  const potentials = potentialFlags();
 
   return `
     <div class="bm-card${isFinal ? ' bm-final' : ''}">
@@ -221,7 +222,6 @@ function renderBracketPage() {
     const col = document.getElementById(id);
     if (!col) continue;
     const slotH = TOTAL_PX / n;
-    col.style.height = `${TOTAL_PX}px`;
     col.innerHTML = '';
     for (let i = 0; i < n; i++) {
       const m = ms[i] || null;
@@ -236,7 +236,6 @@ function renderBracketPage() {
   // Centre: Final + 3rd place
   const center = document.getElementById('bracket-center');
   if (center) {
-    center.style.height = `${TOTAL_PX}px`;
     center.innerHTML = `
       <div style="flex:1"></div>
       <div>${bracket.final  ? renderMatchCard(bracket.final, true) : renderEmptySlot()}</div>

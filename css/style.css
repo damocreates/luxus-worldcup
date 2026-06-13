@@ -380,9 +380,9 @@ footer a:hover { color: var(--text-dim); }
 /* Round headers row */
 .bracket-round-headers {
   display: flex;
-  gap: 0;
+  gap: 16px;
   margin-bottom: .5rem;
-  min-width: 2200px;
+  min-width: 2400px;
 }
 
 .bracket-round-header {
@@ -399,6 +399,7 @@ footer a:hover { color: var(--text-dim); }
 /* Bracket outer scroll wrapper — sole horizontal scroll container */
 .bracket-scroll {
   overflow-x: auto;
+  overflow-y: clip; /* prevent promotion to overflow-y:auto which creates double scrollbar */
   padding-bottom: 1rem;
 }
 
@@ -407,7 +408,7 @@ footer a:hover { color: var(--text-dim); }
   display: flex;
   align-items: stretch;
   gap: 16px;
-  min-width: 2200px;
+  min-width: 2400px;
   position: relative;
 }
 
@@ -432,9 +433,9 @@ footer a:hover { color: var(--text-dim); }
 .bracket-round-col {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: flex-start;
   flex: 1;
-  min-width: 200px;
+  min-width: 210px;
   padding: 0 8px;
 }
 
@@ -493,12 +494,12 @@ footer a:hover { color: var(--text-dim); }
   display: flex;
   align-items: center;
   gap: .5rem;
-  padding: .45rem .75rem;
+  padding: .55rem .9rem;
   font-size: .82rem;
   font-weight: 500;
   border-bottom: 1px solid var(--border);
   transition: background .1s;
-  min-height: 36px;
+  min-height: 40px;
 }
 
 .bm-team:last-child { border-bottom: none; }

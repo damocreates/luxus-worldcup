@@ -1,5 +1,5 @@
 // ── Luxus WC 2026 Service Worker ──────────────────────────────────────────────
-const CACHE_NAME  = 'luxus-wc-v0.3.0';
+const CACHE_NAME  = 'luxus-wc-v0.4.0';
 const API_HOST    = 'raw.githubusercontent.com';
 
 const STATIC_ASSETS = [
@@ -22,6 +22,8 @@ const STATIC_ASSETS = [
   './js/leaderboard.js',
   './js/groups.js',
   './js/welcome.js',
+  './js/settings.js',
+  './js/welcome-fixtures.js',
   './manifest.json',
 ];
 
