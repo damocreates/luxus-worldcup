@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>if(!localStorage.getItem('luxus_wc_user'))location.replace('welcome.html');</script>
-  <title>Groups — Luxus WC 2026</title>
+  <title>Upcoming Fixtures — Luxus WC 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,9 +26,9 @@
         <a href="dashboard.html">My Teams</a>
         <a href="index.html">Tracker</a>
         <a href="bracket.html">Bracket</a>
-        <a href="groups.html" class="active">Groups</a>
+        <a href="groups.html">Groups</a>
         <a href="leaderboard.html">Leaderboard</a>
-        <a href="upcoming.html">Upcoming</a>
+        <a href="upcoming.html" class="active">Upcoming</a>
       </nav>
       <div class="nav-user">
         <span class="nav-user-name" id="nav-name"></span>
@@ -40,9 +40,9 @@
       <a href="dashboard.html">My Teams</a>
       <a href="index.html">Tracker</a>
       <a href="bracket.html">Bracket</a>
-      <a href="groups.html" class="active">Groups</a>
+      <a href="groups.html">Groups</a>
       <a href="leaderboard.html">Leaderboard</a>
-      <a href="upcoming.html">Upcoming</a>
+      <a href="upcoming.html" class="active">Upcoming</a>
       <div class="nav-drawer-user">
         <span class="nav-drawer-name" id="nav-drawer-name"></span>
         <a href="#" id="nav-drawer-logout" class="nav-logout">Sign out</a>
@@ -53,22 +53,30 @@
 
 <main>
   <div class="container">
+    <div class="uf-page">
 
-    <div class="status-bar">
-      <span id="status-pill" class="status-pill status-loading">Loading…</span>
-      <button id="refresh-btn" class="btn" title="Reload data from API">↻ Refresh</button>
+      <div class="status-bar">
+        <span id="status-pill" class="status-pill status-loading">Loading…</span>
+        <button id="refresh-btn" class="btn" title="Reload data from API">↻ Refresh</button>
+      </div>
+
+      <div id="error-notice" class="error-notice hidden"></div>
+      <div id="uf-notice" class="uf-notice hidden"></div>
+
+      <div class="uf-filter-bar">
+        <div class="sort-buttons" role="group" aria-label="Time filter">
+          <button class="sort-btn active" data-time="next24">Next 24 Hours</button>
+          <button class="sort-btn" data-time="today">Today</button>
+          <button class="sort-btn" data-time="tomorrow">Tomorrow</button>
+          <button class="sort-btn" data-time="all">All Upcoming</button>
+        </div>
+        <div class="uf-filter-sep"></div>
+        <button class="sort-btn" id="sweep-toggle">Sweepstake Only</button>
+      </div>
+
+      <div id="uf-list" class="uf-list"></div>
+
     </div>
-
-    <div id="error-notice" class="error-notice hidden"></div>
-
-    <div class="groups-key">
-      <span class="gp-key gp-qualify">Qualify automatically</span>
-      <span class="gp-key gp-maybe">Potential best 3rd</span>
-      <span class="gp-key gp-out">Eliminated</span>
-    </div>
-
-    <div id="groups-grid" class="groups-grid"></div>
-
   </div>
 </main>
 
@@ -80,6 +88,7 @@
         <a href="dashboard.html">My Teams</a>
         <a href="index.html">Tracker</a>
         <a href="bracket.html">Bracket</a>
+        <a href="groups.html">Groups</a>
         <a href="leaderboard.html">Leaderboard</a>
       </nav>
     </div>
@@ -92,7 +101,7 @@
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/settings.js"></script>
-<script src="js/groups.js"></script>
+<script src="js/upcoming.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');

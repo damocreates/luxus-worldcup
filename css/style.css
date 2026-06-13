@@ -1333,3 +1333,187 @@ footer a:hover { color: var(--text-dim); }
   font-size: .85rem;
   padding: .5rem 0;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   UPCOMING FIXTURES PAGE
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.uf-page {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Filter bar */
+.uf-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.uf-filter-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0 .1rem;
+}
+
+#sweep-toggle.active {
+  background: rgba(245,200,66,.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Fallback notice */
+.uf-notice {
+  padding: .45rem .85rem;
+  background: rgba(79,195,247,.07);
+  border: 1px solid rgba(79,195,247,.2);
+  border-radius: var(--radius);
+  color: var(--blue);
+  font-size: .78rem;
+  margin-bottom: .85rem;
+}
+
+/* Cards list */
+.uf-list {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+}
+
+/* Individual fixture card */
+.uf-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: border-color .15s;
+}
+
+.uf-card:hover { border-color: var(--blue); }
+
+.uf-card.uf-sweep {
+  border-color: rgba(245,200,66,.5);
+  background: linear-gradient(180deg, rgba(245,200,66,.05) 0%, var(--card) 50%);
+  box-shadow: 0 0 0 1px rgba(245,200,66,.1), var(--shadow);
+}
+
+.uf-card.uf-sweep:hover { border-color: rgba(245,200,66,.8); }
+
+/* Card header: date/time left, venue right */
+.uf-hdr {
+  background: var(--card-hdr);
+  border-bottom: 1px solid var(--border);
+  padding: .5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.uf-when {
+  font-size: .78rem;
+  color: var(--blue);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.uf-venue {
+  font-size: .7rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Teams section */
+.uf-teams {
+  padding: .6rem 1rem .7rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.uf-team {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .3rem 0;
+  font-size: .875rem;
+  font-weight: 500;
+  min-height: 34px;
+}
+
+.uf-team-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Owner badge (coloured pill) */
+.uf-owner {
+  display: inline-flex;
+  align-items: center;
+  padding: .1rem .45rem;
+  border-radius: 999px;
+  font-size: .67rem;
+  font-weight: 600;
+  border: 1px solid;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Score number */
+.uf-score {
+  font-weight: 700;
+  font-size: .95rem;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+/* Divider between the two teams */
+.uf-divider {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .15rem 0;
+  /* indent to sit under team name, past the 32px flag + .5rem gap */
+  padding-left: calc(32px + .5rem);
+}
+
+.uf-vs {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* FT badge */
+.uf-ft {
+  display: inline-flex;
+  align-items: center;
+  padding: .1rem .38rem;
+  border-radius: 4px;
+  font-size: .67rem;
+  font-weight: 700;
+  background: rgba(148,163,184,.1);
+  color: var(--text-dim);
+  border: 1px solid rgba(148,163,184,.2);
+  letter-spacing: .04em;
+}
+
+@media (max-width: 500px) {
+  .uf-filter-bar { gap: .3rem; }
+  .uf-venue { display: none; }
+  .uf-hdr { justify-content: flex-start; }
+}

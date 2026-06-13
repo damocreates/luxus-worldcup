@@ -6,6 +6,24 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.2] — 2026-06-13
+
+### Added
+
+#### Upcoming Fixtures page (`upcoming.html`)
+- Full-page fixture list showing all upcoming and recent matches with sweepstake context
+- **Default view — Next 24 hours**: shows all fixtures kicking off in the next 24 h BST; auto-falls back to the next 5 upcoming fixtures if the window is empty; falls back to the 5 most recently played matches if the tournament is over
+- **Fixture cards** display both team names with flags (flagcdn.com), BST kick-off time and date, venue, score + FT badge once played, and WIN/DRAW/LOSS badge per sweepstake team once the result is known
+- Coloured owner badge next to each team showing their sweepstake participant; teams with no owner show no badge
+- Cards involving at least one sweepstake team are highlighted with a gold border and subtle gold background tint; non-sweepstake fixtures use the standard card style
+- **Filters** at the top of the page: Next 24 Hours (default) · Today · Tomorrow · All Upcoming · Sweepstake Only (combinable toggle)
+- Clean vertical card list, max 700 px centred, responsive single-column on mobile
+- Status pill (loading / live / cached / error) and manual Refresh button, consistent with all other pages
+- Auth-guarded — unauthenticated visitors are redirected to `welcome.html`
+- "Upcoming" link added to the desktop nav, mobile hamburger drawer, and footer on all pages
+
+---
+
 ## [0.4.1] — 2026-06-13
 
 ### Fixed
