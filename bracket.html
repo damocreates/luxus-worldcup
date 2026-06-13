@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup 2026 Bracket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bracket-page">
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="site-title">⚽ World Cup 2026 <span>Bracket</span></div>
+      <nav>
+        <a href="index.html">Sweepstakes</a>
+        <a href="bracket.html" class="active">Bracket</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="status-bar">
+      <span id="status-pill" class="status-pill status-loading">Loading…</span>
+      <button id="refresh-btn" class="btn" title="Reload data from API">↻ Refresh</button>
+    </div>
+
+    <div id="error-notice" class="error-notice hidden"></div>
+
+    <div class="bracket-scroll">
+
+      <!-- Round label headers — mirrors bracket-wrap column structure -->
+      <div class="bracket-round-headers" id="bracket-headers">
+        <div style="display:flex;flex:1">
+          <div class="bracket-round-header" style="flex:1">Round of 32</div>
+          <div class="bracket-round-header" style="flex:1">Round of 16</div>
+          <div class="bracket-round-header" style="flex:1">QF</div>
+          <div class="bracket-round-header" style="flex:1">SF</div>
+        </div>
+        <div class="bracket-round-header" style="flex:0 0 180px">Final</div>
+        <div style="display:flex;flex:1">
+          <div class="bracket-round-header" style="flex:1">SF</div>
+          <div class="bracket-round-header" style="flex:1">QF</div>
+          <div class="bracket-round-header" style="flex:1">Round of 16</div>
+          <div class="bracket-round-header" style="flex:1">Round of 32</div>
+        </div>
+      </div>
+
+      <!-- Bracket grid -->
+      <div class="bracket-wrap" id="bracket-wrap">
+        <canvas id="bracket-canvas"></canvas>
+
+        <!-- Left half: R32 → R16 → QF → SF -->
+        <div class="bracket-half bracket-left">
+          <div class="bracket-round-col" id="left-r32"></div>
+          <div class="bracket-round-col" id="left-r16"></div>
+          <div class="bracket-round-col" id="left-qf"></div>
+          <div class="bracket-round-col" id="left-sf"></div>
+        </div>
+
+        <!-- Centre: Final + 3rd place -->
+        <div class="bracket-center" id="bracket-center"></div>
+
+        <!-- Right half: SF (closest to centre) → QF → R16 → R32 (far right) -->
+        <div class="bracket-half bracket-right">
+          <div class="bracket-round-col" id="right-sf"></div>
+          <div class="bracket-round-col" id="right-qf"></div>
+          <div class="bracket-round-col" id="right-r16"></div>
+          <div class="bracket-round-col" id="right-r32"></div>
+        </div>
+      </div>
+
+    </div><!-- /bracket-scroll -->
+
+    <!-- Owner legend -->
+    <div id="owner-legend" class="owner-legend" style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.5rem;"></div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span id="version-display"></span>
+      <a href="index.html">← Sweepstakes</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/version.js"></script>
+<script src="js/flags.js"></script>
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/bracket.js"></script>
+</body>
+</html>

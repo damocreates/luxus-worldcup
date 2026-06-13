@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup 2026 Sweepstakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="site-title">⚽ World Cup 2026 <span>Sweepstakes</span></div>
+      <nav>
+        <a href="index.html" class="active">Sweepstakes</a>
+        <a href="bracket.html">Bracket</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="status-bar">
+      <span id="status-pill" class="status-pill status-loading">Loading…</span>
+      <button id="refresh-btn" class="btn" title="Reload data from API">↻ Refresh</button>
+    </div>
+
+    <div id="error-notice" class="error-notice hidden"></div>
+
+    <div class="controls">
+      <div class="sort-buttons" role="group" aria-label="Sort options">
+        <button class="sort-btn active" data-view="person">Person A–Z</button>
+        <button class="sort-btn" data-view="team">Team A–Z</button>
+        <button class="sort-btn" data-view="group">By Group</button>
+        <button class="sort-btn" data-view="points">By Points</button>
+      </div>
+      <input type="search" id="search" class="search-input" placeholder="Search person or team…" autocomplete="off">
+    </div>
+
+    <div id="group-sections"></div>
+    <div id="cards-grid" class="cards-grid"></div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span id="version-display"></span>
+      <a href="bracket.html">View Bracket →</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/version.js"></script>
+<script src="js/flags.js"></script>
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
