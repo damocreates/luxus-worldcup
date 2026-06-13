@@ -325,6 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const vEl = document.getElementById('version-display');
   if (vEl) vEl.textContent = VERSION;
 
+  populateNavUser();
+
   // Sort buttons
   document.querySelectorAll('.sort-btn').forEach(btn => {
     btn.addEventListener('click', () => {

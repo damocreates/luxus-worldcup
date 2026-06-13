@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxus World Cup 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="welcome-page">
+
+<div class="welcome-wrap">
+  <div class="welcome-card">
+    <div class="welcome-trophy">🏆</div>
+    <h1 class="welcome-title">Luxus World Cup 2026</h1>
+    <p class="welcome-tagline">Sweepstakes Tracker</p>
+    <input
+      type="text"
+      id="name-input"
+      class="welcome-input"
+      placeholder="Enter your name to continue"
+      autocomplete="off"
+      spellcheck="false"
+    >
+    <button id="continue-btn" class="welcome-btn">Continue →</button>
+    <div id="welcome-error" class="welcome-error hidden">Name not recognised — are you in the sweepstake?</div>
+  </div>
+  <div class="welcome-version" id="version-display"></div>
+</div>
+
+<script src="js/version.js"></script>
+<script src="js/welcome.js"></script>
+</body>
+</html>

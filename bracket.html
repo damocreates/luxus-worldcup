@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Cup 2026 Bracket</title>
+  <script>if(!localStorage.getItem('luxus_wc_user'))location.replace('welcome.html');</script>
+  <title>Bracket — Luxus WC 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,11 +15,16 @@
 <header>
   <div class="container">
     <div class="header-inner">
-      <div class="site-title">⚽ World Cup 2026 <span>Bracket</span></div>
+      <div class="site-title">⚽ <span>Luxus WC 2026</span></div>
       <nav>
-        <a href="index.html">Sweepstakes</a>
+        <a href="dashboard.html">My Teams</a>
+        <a href="index.html">Company Tracker</a>
         <a href="bracket.html" class="active">Bracket</a>
       </nav>
+      <div class="nav-user">
+        <span class="nav-user-name" id="nav-name"></span>
+        <a href="#" id="nav-logout" class="nav-logout">Not you?</a>
+      </div>
     </div>
   </div>
 </header>
@@ -88,7 +94,10 @@
   <div class="container">
     <div class="footer-inner">
       <span id="version-display"></span>
-      <a href="index.html">← Sweepstakes</a>
+      <nav style="margin:0">
+        <a href="dashboard.html">My Teams</a>
+        <a href="index.html">Company Tracker</a>
+      </nav>
     </div>
   </div>
 </footer>
@@ -97,6 +106,7 @@
 <script src="js/flags.js"></script>
 <script src="js/data.js"></script>
 <script src="js/api.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/bracket.js"></script>
 </body>
 </html>

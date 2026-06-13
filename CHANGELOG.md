@@ -6,6 +6,32 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.0] — 2026-06-13
+
+### Added
+
+#### Welcome screen (`welcome.html`)
+- Full-screen name-gate splash before entering the site
+- Plain text input with no autocomplete, dropdown, or suggestions
+- Case-insensitive, whitespace-trimmed name matching
+- Shake animation and inline error message on unrecognised input
+- Redirects to dashboard on success; name stored to `localStorage` (`luxus_wc_user`)
+- Already-logged-in users skipped straight to dashboard
+
+#### Personal dashboard (`dashboard.html`)
+- "Welcome back, [Name] 👋" header and live total-points banner
+- Team cards for each of the logged-in user's sweepstake teams
+- Full fixture list per team across all stages, with scores and WIN/DRAW/LOSS badges
+- Same status pill and manual Refresh as the company tracker
+
+#### Auth & navigation
+- `js/auth.js`: shared `getUser()`, `logout()`, `populateNavUser()` utilities
+- Auth guard (inline `<head>` script) on `index.html`, `bracket.html`, and `dashboard.html` — unauthenticated visitors are redirected to `welcome.html`
+- Unified three-link nav on all pages: **My Teams · Company Tracker · Bracket**
+- Logged-in name displayed on the right of the nav with a **Not you?** button that clears the session and returns to the welcome screen
+
+---
+
 ## [0.1.0] — 2026-06-13
 
 ### Added

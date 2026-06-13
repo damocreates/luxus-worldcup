@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>if(!localStorage.getItem('luxus_wc_user'))location.replace('welcome.html');</script>
-  <title>Company Tracker — Luxus WC 2026</title>
+  <title>My Teams — Luxus WC 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
     <div class="header-inner">
       <div class="site-title">⚽ <span>Luxus WC 2026</span></div>
       <nav>
-        <a href="dashboard.html">My Teams</a>
-        <a href="index.html" class="active">Company Tracker</a>
+        <a href="dashboard.html" class="active">My Teams</a>
+        <a href="index.html">Company Tracker</a>
         <a href="bracket.html">Bracket</a>
       </nav>
       <div class="nav-user">
@@ -32,6 +32,11 @@
 <main>
   <div class="container">
 
+    <div class="dashboard-hero">
+      <div class="dashboard-welcome" id="dashboard-welcome"></div>
+      <div class="dashboard-pts" id="dashboard-pts">— pts</div>
+    </div>
+
     <div class="status-bar">
       <span id="status-pill" class="status-pill status-loading">Loading…</span>
       <button id="refresh-btn" class="btn" title="Reload data from API">↻ Refresh</button>
@@ -39,18 +44,7 @@
 
     <div id="error-notice" class="error-notice hidden"></div>
 
-    <div class="controls">
-      <div class="sort-buttons" role="group" aria-label="Sort options">
-        <button class="sort-btn active" data-view="person">Person A–Z</button>
-        <button class="sort-btn" data-view="team">Team A–Z</button>
-        <button class="sort-btn" data-view="group">By Group</button>
-        <button class="sort-btn" data-view="points">By Points</button>
-      </div>
-      <input type="search" id="search" class="search-input" placeholder="Search person or team…" autocomplete="off">
-    </div>
-
-    <div id="group-sections"></div>
-    <div id="cards-grid" class="cards-grid"></div>
+    <div id="dashboard-grid" class="cards-grid"></div>
 
   </div>
 </main>
@@ -60,7 +54,7 @@
     <div class="footer-inner">
       <span id="version-display"></span>
       <nav style="margin:0">
-        <a href="dashboard.html">My Teams</a>
+        <a href="index.html">Company Tracker</a>
         <a href="bracket.html">Bracket</a>
       </nav>
     </div>
@@ -72,6 +66,6 @@
 <script src="js/data.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>

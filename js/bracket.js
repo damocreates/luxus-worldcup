@@ -362,6 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const vEl = document.getElementById('version-display');
   if (vEl) vEl.textContent = VERSION;
 
+  populateNavUser();
+
   document.getElementById('refresh-btn').addEventListener('click', () => loadData(true));
 
   window.addEventListener('resize', () => {
