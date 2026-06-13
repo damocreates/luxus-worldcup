@@ -791,11 +791,62 @@ footer a:hover { color: var(--text-dim); }
 
 .skel-row td { padding: .55rem .6rem; }
 
-/* ── Nav: 5-link wrap on mobile ─────────────────────────────────────────────── */
+/* ── Hamburger button (hidden on desktop) ────────────────────────────────────── */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 1.1rem;
+  padding: .35rem .65rem;
+  line-height: 1;
+  transition: background .15s, border-color .15s;
+  flex-shrink: 0;
+}
+.nav-toggle:hover { background: var(--border); border-color: var(--muted); }
+
+/* ── Mobile nav drawer ───────────────────────────────────────────────────────── */
+.nav-drawer {
+  display: none;
+  flex-direction: column;
+  gap: .2rem;
+  padding: .6rem 0 .75rem;
+  border-top: 1px solid var(--border);
+}
+.nav-drawer.open { display: flex; }
+.nav-drawer a {
+  padding: .55rem .75rem;
+  border-radius: var(--radius);
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: background .12s, color .12s;
+}
+.nav-drawer a:hover, .nav-drawer a.active { background: var(--border); color: var(--text); text-decoration: none; }
+.nav-drawer a.active { color: var(--gold); }
+.nav-drawer-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .55rem .75rem;
+  margin-top: .2rem;
+  border-top: 1px solid var(--border);
+  font-size: .82rem;
+  gap: .5rem;
+}
+.nav-drawer-name { font-weight: 600; color: var(--text); }
+
+/* ── Mobile breakpoint: swap desktop nav for hamburger ───────────────────────── */
 @media (max-width: 700px) {
-  nav { flex-wrap: wrap; justify-content: center; }
-  nav a { padding: .3rem .65rem; font-size: .8rem; }
-  .nav-user { font-size: .75rem; }
+  .header-inner { flex-wrap: nowrap; justify-content: space-between; }
+  .site-title { flex: 1; text-align: center; font-size: 1rem; }
+  nav { display: none; }
+  .nav-user { display: none; }
+  .nav-toggle { display: flex; }
 }
 
 /* ── Leaderboard ────────────────────────────────────────────────────────────── */
