@@ -4,9 +4,10 @@ const SLOT_PX   = 175;          // height (px) of one R32 slot
 const TOTAL_PX  = SLOT_PX * 8; // 1400 px — total column height
 
 let bracketState = {
-  matches:   [],
-  standings: {},
-  byNum:     {},
+  matches:       [],
+  standings:     {},
+  byNum:         {},
+  groupComplete: {},
 };
 
 // ── Status (reused from app.js pattern) ──────────────────────────────────────
@@ -50,9 +51,10 @@ async function loadData(refresh = false) {
     showError('Live data fetch failed — showing last cached data.');
   }
 
-  bracketState.matches   = matches;
-  bracketState.standings = computeStandings(matches);
-  bracketState.byNum     = buildMatchIndex(matches);
+  bracketState.matches       = matches;
+  bracketState.standings     = computeStandings(matches);
+  bracketState.byNum         = buildMatchIndex(matches);
+  bracketState.groupComplete = computeGroupComplete(matches);
 
   if (!fromCache) {
     const ts = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -70,9 +72,9 @@ function isCode(str) {
          /^[WL]\d+$/i.test(str);
 }
 
-function isSlotResolved(code, standings, byNum) {
+function isSlotResolved(code, standings, byNum, groupComplete) {
   if (!code || !isCode(code)) return true;
-  return resolveTeam(code, standings, byNum) !== code;
+  return resolveTeam(code, standings, byNum, groupComplete) !== code;
 }
 
 function getMatchByCode(code, byNum) {
@@ -136,7 +138,7 @@ function escHtml(s) {
 
 function renderMatchCard(match, isFinal) {
   if (!match) return '';
-  const { standings, byNum } = bracketState;
+  const { standings, byNum, groupComplete } = bracketState;
 
   const num    = match.num ? `Match ${match.num}` : match.round;
   const date   = formatDate(match.date);
@@ -145,10 +147,10 @@ function renderMatchCard(match, isFinal) {
 
   const code1  = match.team1 || '';
   const code2  = match.team2 || '';
-  const team1  = resolveTeam(code1, standings, byNum);
-  const team2  = resolveTeam(code2, standings, byNum);
-  const res1   = !isCode(code1) || isSlotResolved(code1, standings, byNum);
-  const res2   = !isCode(code2) || isSlotResolved(code2, standings, byNum);
+  const team1  = resolveTeam(code1, standings, byNum, groupComplete);
+  const team2  = resolveTeam(code2, standings, byNum, groupComplete);
+  const res1   = !isCode(code1) || isSlotResolved(code1, standings, byNum, groupComplete);
+  const res2   = !isCode(code2) || isSlotResolved(code2, standings, byNum, groupComplete);
 
   const hasScore = match.score && match.score.ft;
   const [s1, s2] = hasScore ? match.score.ft : [null, null];
@@ -169,8 +171,8 @@ function renderMatchCard(match, isFinal) {
 
   // Potential flags — both unresolved teams combined into one row, max 8 total
   function potentialFlags() {
-    const t1 = res1 ? [] : getPotentialTeams(code1, standings, byNum);
-    const t2 = res2 ? [] : getPotentialTeams(code2, standings, byNum);
+    const t1 = res1 ? [] : getPotentialTeams(code1, standings, byNum, groupComplete);
+    const t2 = res2 ? [] : getPotentialTeams(code2, standings, byNum, groupComplete);
     const all = [...new Set([...t1, ...t2])];
     if (!all.length) return '';
     const MAX = 8;

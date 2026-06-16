@@ -6,6 +6,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.3] — 2026-06-16
+
+### Removed
+
+#### Leaderboard
+- Deleted `leaderboard.html` and `js/leaderboard.js` entirely
+- Removed Leaderboard link from the desktop nav, mobile hamburger drawer, and footer on all pages (`index.html`, `dashboard.html`, `bracket.html`, `groups.html`, `upcoming.html`)
+
+### Fixed
+
+#### Bracket placeholder resolution
+- Group position slots (`1A`, `2B`, `3C/D/F` etc.) now only resolve to a real team name once **all** group-stage matches for that group have been played and carry a final score — mid-group standings are no longer used to pre-fill bracket slots
+- Knockout winner slots (`W73`, `W74` etc.) already required a final score; this invariant is preserved
+- Knockout loser slots (`L101`, `L102` — third-place play-off) same rule
+- Preview flag grids continue to show all candidate teams for any unresolved slot; they are hidden and replaced by the confirmed team name and flag only after the slot is definitively resolved
+- `computeGroupComplete()` helper added to `api.js` to determine per-group completion status; `resolveTeam()` and `getPotentialTeams()` accept an optional `groupComplete` map that enables the strict resolution mode used by the bracket
+
+---
+
 ## [0.4.2] — 2026-06-13
 
 ### Added

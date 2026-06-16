@@ -85,9 +85,29 @@ function buildMatchIndex(matches) {
   return idx;
 }
 
+// Returns a map of group key → boolean: true only when every match in that group
+// has a final score.  Used by the bracket to gate group-position slot resolution.
+function computeGroupComplete(matches) {
+  const total = {};
+  const done  = {};
+  for (const m of matches) {
+    if (!m.group) continue;
+    const g = m.group;
+    total[g] = (total[g] || 0) + 1;
+    if (m.score && m.score.ft) done[g] = (done[g] || 0) + 1;
+  }
+  const result = {};
+  for (const g of Object.keys(total)) {
+    result[g] = total[g] > 0 && total[g] === (done[g] || 0);
+  }
+  return result;
+}
+
 // Resolve a team code ("1A", "2B", "3A/B/C/D/F", "W73") to the canonical team name.
 // Returns the resolved name if known, or the original code if not yet determined.
-function resolveTeam(code, standings, byNum, _depth = 0) {
+// Pass groupComplete (from computeGroupComplete) to enforce strict group-completion
+// gating; omit or pass null to use the old behaviour (resolve from current standings).
+function resolveTeam(code, standings, byNum, groupComplete = null, _depth = 0) {
   if (!code || _depth > 10) return code || '';
 
   // "1A" / "2B" etc. — position N in a specific group
@@ -95,6 +115,8 @@ function resolveTeam(code, standings, byNum, _depth = 0) {
   if (posGroup) {
     const pos  = parseInt(posGroup[1], 10) - 1;
     const gKey = 'Group ' + posGroup[2].toUpperCase();
+    // When strict mode is on, only resolve once all group matches are final
+    if (groupComplete != null && !groupComplete[gKey]) return code;
     const row  = (standings[gKey] || [])[pos];
     return row ? row.team : code;
   }
@@ -113,8 +135,8 @@ function resolveTeam(code, standings, byNum, _depth = 0) {
       const [e1, e2] = m.score.et || [s1, s2];
       const [p1, p2] = m.score.p  || [0, 0];
       const t1wins   = e1 > e2 || (e1 === e2 && p1 > p2);
-      const t1 = resolveTeam(m.team1, standings, byNum, _depth + 1);
-      const t2 = resolveTeam(m.team2, standings, byNum, _depth + 1);
+      const t1 = resolveTeam(m.team1, standings, byNum, groupComplete, _depth + 1);
+      const t2 = resolveTeam(m.team2, standings, byNum, groupComplete, _depth + 1);
       if (wantWinner) return t1wins ? t1 : t2;
       return t1wins ? t2 : t1;
     }
@@ -126,7 +148,8 @@ function resolveTeam(code, standings, byNum, _depth = 0) {
 }
 
 // Return the set of concrete team names that could fill an unresolved slot.
-function getPotentialTeams(code, standings, byNum, _depth = 0) {
+// Accepts the same optional groupComplete map as resolveTeam.
+function getPotentialTeams(code, standings, byNum, groupComplete = null, _depth = 0) {
   if (!code || _depth > 6) return [];
 
   // "1A" — all teams in that group are potential candidates
@@ -153,11 +176,11 @@ function getPotentialTeams(code, standings, byNum, _depth = 0) {
     const m = byNum[parseInt(winnerOf[2], 10)];
     if (!m) return [];
     if (m.score && m.score.ft) {
-      return [resolveTeam(code, standings, byNum, 0)];
+      return [resolveTeam(code, standings, byNum, groupComplete)];
     }
     return [
-      ...getPotentialTeams(m.team1, standings, byNum, _depth + 1),
-      ...getPotentialTeams(m.team2, standings, byNum, _depth + 1),
+      ...getPotentialTeams(m.team1, standings, byNum, groupComplete, _depth + 1),
+      ...getPotentialTeams(m.team2, standings, byNum, groupComplete, _depth + 1),
     ];
   }
 
