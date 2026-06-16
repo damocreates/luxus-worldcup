@@ -185,8 +185,8 @@ function renderFixtureRow(match, isTeam1) {
     ? `<img src="${oppFlagUrl}" width="20" height="15" alt="${escHtml(opp)}" loading="lazy">`
     : '';
 
-  const dateStr = formatDate(match.date);
-  const bstTime = timeToBST(match.time);
+  const { date: bstDateRaw, time: bstTime } = matchToBST(match.date, match.time);
+  const dateStr = formatDate(bstDateRaw);
 
   let resultHtml = '';
   if (match.score && match.score.ft) {

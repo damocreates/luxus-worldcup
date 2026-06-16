@@ -8,6 +8,8 @@ const KNOCKOUT_ROUNDS = ['Round of 32', 'Round of 16', 'Quarter-final', 'Semi-fi
 // ── Time helpers ──────────────────────────────────────────────────────────────
 
 // "13:00 UTC-6"  →  "20:00" (BST = UTC+1)
+// Returns only the time string; does NOT adjust the calendar date.
+// Use matchToBST() when you need both a correct BST time AND the correct BST date.
 function timeToBST(timeStr) {
   if (!timeStr) return '';
   const m = timeStr.match(/^(\d{1,2}):(\d{2})\s*UTC([+-]\d+)?$/);
@@ -19,6 +21,25 @@ function timeToBST(timeStr) {
   let bst = h - offset + 1;
   bst = ((bst % 24) + 24) % 24;
   return `${String(bst).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+}
+
+// Returns {date: 'YYYY-MM-DD', time: 'HH:MM'} in BST, correctly advancing the
+// calendar date when the UTC→BST conversion crosses midnight.
+// Example: date="2026-06-15", time="23:30 UTC+0"  →  {date:"2026-06-16", time:"00:30"}
+function matchToBST(dateStr, timeStr) {
+  if (!dateStr || !timeStr) return { date: dateStr || '', time: timeToBST(timeStr) };
+  const m = timeStr.match(/^(\d{1,2}):(\d{2})\s*UTC([+-]\d+)?$/);
+  if (!m) return { date: dateStr, time: timeStr };
+  const h      = parseInt(m[1], 10);
+  const min    = parseInt(m[2], 10);
+  const offset = m[3] ? parseInt(m[3], 10) : 0;
+  // Build the full UTC instant from the API date + local time - offset, then add 1 h for BST
+  const base  = new Date(dateStr + 'T00:00:00Z');
+  const bstDt = new Date(base.getTime() + (h * 60 + min - offset * 60 + 60) * 60000);
+  return {
+    date: bstDt.toISOString().slice(0, 10),
+    time: `${String(bstDt.getUTCHours()).padStart(2, '0')}:${String(bstDt.getUTCMinutes()).padStart(2, '0')}`,
+  };
 }
 
 // "2026-06-11" → "Thu 11 Jun"

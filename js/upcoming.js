@@ -5,8 +5,7 @@ let upState = {
   standings:  {},
   byNum:      {},
   cacheTs:    0,
-  timeFilter: 'next24', // 'next24' | 'today' | 'tomorrow' | 'all'
-  sweepOnly:  false,
+  timeFilter: 'next24', // 'next24' | 'today' | 'tomorrow' | 'all' | 'results'
 };
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -34,7 +33,7 @@ function hideError() {
 
 // ── Time helpers ──────────────────────────────────────────────────────────────
 
-// Parse "13:00 UTC-6" + "2026-06-11" → UTC Date
+// Parse "13:00 UTC-6" + "2026-06-11" → UTC Date, correctly handling day rollover.
 function matchUtcTs(date, timeStr) {
   if (!date || !timeStr) return null;
   const m = timeStr.match(/(\d+):(\d+)\s+UTC([+-]?\d+)/);
@@ -42,9 +41,8 @@ function matchUtcTs(date, timeStr) {
   const h      = parseInt(m[1], 10);
   const min    = parseInt(m[2], 10);
   const offset = parseInt(m[3], 10);
-  let utcH     = h - offset;
-  utcH = ((utcH % 24) + 24) % 24;
-  return new Date(`${date}T${String(utcH).padStart(2, '0')}:${String(min).padStart(2, '0')}:00Z`);
+  const base   = new Date(`${date}T00:00:00Z`);
+  return new Date(base.getTime() + (h * 60 + min - offset * 60) * 60000);
 }
 
 // Return YYYY-MM-DD date string in BST (UTC+1), shifted by offsetDays
@@ -104,6 +102,7 @@ async function loadData() {
 function renderSkeleton() {
   const list = document.getElementById('uf-list');
   if (!list) return;
+  list.style.display = '';
   list.innerHTML = Array.from({ length: 5 }, () => `
     <div class="uf-card">
       <div class="uf-hdr">
@@ -148,7 +147,7 @@ function sortByKickoff(arr) {
 }
 
 function getFilteredMatches() {
-  const { matches, timeFilter, sweepOnly } = upState;
+  const { matches, timeFilter } = upState;
   const now      = Date.now();
   const resolved = matches.map(resolveMatch);
 
@@ -206,11 +205,19 @@ function getFilteredMatches() {
     );
   }
 
-  if (sweepOnly) {
-    filtered = filtered.filter(m => TEAM_OWNER[m.rt1] || TEAM_OWNER[m.rt2]);
-  }
-
   return { matches: filtered, notice };
+}
+
+function getResultsMatches() {
+  const { matches } = upState;
+  const resolved = matches.map(resolveMatch);
+  return resolved
+    .filter(m => m.score && m.score.ft)
+    .sort((a, b) => {
+      const ta = matchUtcTs(a.date, a.time);
+      const tb = matchUtcTs(b.date, b.time);
+      return (tb ? tb.getTime() : 0) - (ta ? ta.getTime() : 0);
+    });
 }
 
 // ── Card rendering ────────────────────────────────────────────────────────────
@@ -241,8 +248,8 @@ function renderCard(match) {
     ? `<img src="${escHtml(f2url)}" width="32" height="24" alt="${escHtml(rt2)}" loading="lazy" style="flex-shrink:0">`
     : `<span style="width:32px;flex-shrink:0;display:inline-block"></span>`;
 
-  const bstTime = timeToBST(match.time);
-  const dateStr = formatDate(match.date);
+  const { date: bstDateRaw, time: bstTime } = matchToBST(match.date, match.time);
+  const dateStr = formatDate(bstDateRaw);
   const venue   = match.ground ? escHtml(match.ground) : '';
 
   const played = !!(match.score && match.score.ft);
@@ -289,27 +296,44 @@ function renderCard(match) {
 // ── Render ────────────────────────────────────────────────────────────────────
 
 function render() {
-  const list = document.getElementById('uf-list');
+  const list   = document.getElementById('uf-list');
+  const resSec = document.getElementById('uf-results');
   if (!list) return;
 
-  const { matches, notice } = getFilteredMatches();
+  const isResults = upState.timeFilter === 'results';
+  const noticeEl  = document.getElementById('uf-notice');
 
-  const noticeEl = document.getElementById('uf-notice');
-  if (noticeEl) {
-    if (notice) {
-      noticeEl.textContent = notice;
-      noticeEl.classList.remove('hidden');
+  // Upcoming list — hidden when Results filter is active
+  if (isResults) {
+    list.style.display = 'none';
+    if (noticeEl) noticeEl.classList.add('hidden');
+  } else {
+    list.style.display = '';
+    const { matches: upcoming, notice } = getFilteredMatches();
+
+    if (noticeEl) {
+      if (notice) { noticeEl.textContent = notice; noticeEl.classList.remove('hidden'); }
+      else noticeEl.classList.add('hidden');
+    }
+
+    if (!upcoming.length) {
+      list.innerHTML = '<div class="empty-state">No fixtures found for this filter.</div>';
     } else {
-      noticeEl.classList.add('hidden');
+      list.innerHTML = upcoming.map(renderCard).join('');
     }
   }
 
-  if (!matches.length) {
-    list.innerHTML = '<div class="empty-state">No fixtures found for this filter.</div>';
-    return;
+  // Results section — always rendered; shows below upcoming or solo when Results filter active
+  if (resSec) {
+    const resultMatches = getResultsMatches();
+    if (!resultMatches.length) {
+      resSec.innerHTML = '';
+    } else {
+      resSec.innerHTML = `
+        <h2 class="section-heading" style="margin-top:${isResults ? '0' : '2rem'}">Recent Results</h2>
+        <div class="uf-list">${resultMatches.map(renderCard).join('')}</div>`;
+    }
   }
-
-  list.innerHTML = matches.map(renderCard).join('');
 }
 
 // ── Wiring ────────────────────────────────────────────────────────────────────
@@ -322,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('refresh-btn').addEventListener('click', () => loadData());
 
-  // Time filter buttons
+  // Time filter buttons (including Results)
   document.querySelectorAll('[data-time]').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('[data-time]').forEach(b => b.classList.remove('active'));
@@ -331,16 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
       render();
     });
   });
-
-  // Sweepstake only toggle
-  const sweepBtn = document.getElementById('sweep-toggle');
-  if (sweepBtn) {
-    sweepBtn.addEventListener('click', () => {
-      upState.sweepOnly = !upState.sweepOnly;
-      sweepBtn.classList.toggle('active', upState.sweepOnly);
-      render();
-    });
-  }
 
   loadData();
 });

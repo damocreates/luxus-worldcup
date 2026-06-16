@@ -6,6 +6,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.4] — 2026-06-16
+
+### Changed
+
+#### Upcoming Fixtures page (`upcoming.html`)
+- Removed "Sweepstake Only" toggle filter; remaining time filters (Next 24 Hours, Today, Tomorrow, All Upcoming) are unchanged
+- Added **Results** filter button alongside the time filters — selecting it shows all completed matches in reverse chronological order (most recent first); a "Recent Results" section is also permanently rendered below the upcoming list when any time filter is active
+- BST time and **date** are now both computed correctly: when converting a kick-off from venue local time to BST, the calendar date is advanced if the +1 h offset crosses midnight (e.g. 23:30 UTC on the 15th → 00:30 BST on the 16th)
+
+### Fixed
+
+#### BST date rollover (all pages)
+- `matchToBST(date, time)` added to `api.js` — returns `{date, time}` in BST, properly handling midnight rollover by computing the full UTC instant before adding +1 h
+- `renderFixtureRow` in `app.js` and `dashboard.js` updated to use `matchToBST` so fixture dates on the Tracker and My Teams pages are also correct
+- `renderMatchCard` in `bracket.js` updated likewise so bracket dates are correct
+- `matchUtcTs` in `upcoming.js` fixed for the same midnight-rollover edge case (affects filter window membership, not just display)
+
+---
+
 ## [0.4.3] — 2026-06-16
 
 ### Removed

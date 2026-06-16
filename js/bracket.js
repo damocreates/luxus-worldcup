@@ -141,8 +141,9 @@ function renderMatchCard(match, isFinal) {
   const { standings, byNum, groupComplete } = bracketState;
 
   const num    = match.num ? `Match ${match.num}` : match.round;
-  const date   = formatDate(match.date);
-  const bst    = timeToBST(match.time);
+  const { date: bstDate, time: bstTime } = matchToBST(match.date, match.time);
+  const date   = formatDate(bstDate);
+  const bst    = bstTime;
   const venue  = escHtml(match.ground || '');
 
   const code1  = match.team1 || '';
