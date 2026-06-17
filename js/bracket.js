@@ -1,7 +1,119 @@
 // ── Knockout Bracket page ─────────────────────────────────────────────────────
 
-const SLOT_PX   = 175;          // height (px) of one R32 slot
-const TOTAL_PX  = SLOT_PX * 8; // 1400 px — total column height
+const UNIT     = 175;           // height (px) of one R32 slot
+const TOTAL_PX = UNIT * 8;     // 1400 px — total column height
+
+// ── Pan / zoom state ──────────────────────────────────────────────────────────
+
+const SCALE_MIN = 0.3;
+const SCALE_MAX = 1.5;
+
+let pan       = { scale: 1, tx: 0, ty: 0 };
+let hasCentred = false;
+
+function applyTransform() {
+  const el = document.getElementById('bracket-inner');
+  if (el) el.style.transform = `translate(${pan.tx}px,${pan.ty}px) scale(${pan.scale})`;
+}
+
+function autoCenter() {
+  const vp = document.getElementById('bracket-viewport');
+  const el = document.getElementById('bracket-inner');
+  if (!vp || !el) return;
+  const vw = vp.clientWidth, vh = vp.clientHeight;
+  const iw = el.scrollWidth,  ih = el.scrollHeight;
+  const s  = Math.max(SCALE_MIN, Math.min(SCALE_MAX, Math.min(vw / iw * 0.95, 1)));
+  pan.scale = s;
+  pan.tx    = (vw - iw * s) / 2;
+  pan.ty    = Math.max(0, (vh - ih * s) / 2);
+  applyTransform();
+}
+
+function initDragPan() {
+  const vp = document.getElementById('bracket-viewport');
+  if (!vp) return;
+
+  let dragging = false, sx = 0, sy = 0, stx = 0, sty = 0;
+
+  vp.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    dragging = true; sx = e.clientX; sy = e.clientY; stx = pan.tx; sty = pan.ty;
+    vp.classList.add('panning');
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    pan.tx = stx + (e.clientX - sx);
+    pan.ty = sty + (e.clientY - sy);
+    applyTransform();
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (dragging) { dragging = false; vp.classList.remove('panning'); }
+  });
+
+  vp.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = vp.getBoundingClientRect();
+    const mx   = e.clientX - rect.left;
+    const my   = e.clientY - rect.top;
+    const ns   = Math.max(SCALE_MIN, Math.min(SCALE_MAX, pan.scale * (e.deltaY < 0 ? 1.1 : 0.909)));
+    pan.tx     = mx - (mx - pan.tx) * (ns / pan.scale);
+    pan.ty     = my - (my - pan.ty) * (ns / pan.scale);
+    pan.scale  = ns;
+    applyTransform();
+  }, { passive: false });
+
+  let lastDist = 0;
+
+  vp.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (e.touches.length === 1) {
+      dragging = true;
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+      stx = pan.tx; sty = pan.ty;
+    } else if (e.touches.length === 2) {
+      dragging = false;
+      lastDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, { passive: false });
+
+  vp.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && dragging) {
+      pan.tx = stx + (e.touches[0].clientX - sx);
+      pan.ty = sty + (e.touches[0].clientY - sy);
+      applyTransform();
+    } else if (e.touches.length === 2) {
+      const d = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      if (lastDist > 0) {
+        const rect = vp.getBoundingClientRect();
+        const mx   = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+        const my   = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+        const ns   = Math.max(SCALE_MIN, Math.min(SCALE_MAX, pan.scale * d / lastDist));
+        pan.tx     = mx - (mx - pan.tx) * (ns / pan.scale);
+        pan.ty     = my - (my - pan.ty) * (ns / pan.scale);
+        pan.scale  = ns;
+        applyTransform();
+      }
+      lastDist = d;
+    }
+  }, { passive: false });
+
+  vp.addEventListener('touchend', e => {
+    if (e.touches.length === 0) dragging = false;
+    lastDist = 0;
+  });
+}
+
+// ── Bracket state ─────────────────────────────────────────────────────────────
 
 let bracketState = {
   matches:       [],
@@ -90,13 +202,10 @@ function splitBracket(matches, standings, byNum) {
   const r16All   = matches.filter(m => m.round === 'Round of 16');
   const r32All   = matches.filter(m => m.round === 'Round of 32');
 
-  // Helper: given a code, trace back through "Wxx" until we reach an
-  // actual match object (not a winner-of-another).
   function traceToMatch(code) {
     return getMatchByCode(code, byNum);
   }
 
-  // Build each half by tracing from the Final outward
   function buildHalf(sfMatch) {
     if (!sfMatch) return { sf: null, qf: [], r16: [], r32: [] };
     const qf1 = traceToMatch(sfMatch.team1);
@@ -107,21 +216,18 @@ function splitBracket(matches, standings, byNum) {
     return { sf: sfMatch, qf: qfs, r16: r16s, r32: r32s };
   }
 
-  // Determine which SF feeds the left/right halves from the Final's team fields
   let leftSF = null, rightSF = null;
   if (finalM) {
     leftSF  = traceToMatch(finalM.team1);
     rightSF = traceToMatch(finalM.team2);
   }
 
-  // Fallback: just split ordered arrays in half
   if (!leftSF && sfAll.length >= 1) leftSF  = sfAll[0];
   if (!rightSF && sfAll.length >= 2) rightSF = sfAll[1];
 
   let left  = buildHalf(leftSF);
   let right = buildHalf(rightSF);
 
-  // Second fallback if tracing yielded nothing: split flat arrays by halves
   if (!left.r32.length && r32All.length) {
     left  = { sf: sfAll[0] || null, qf: qfAll.slice(0, 2), r16: r16All.slice(0, 4), r32: r32All.slice(0, 8) };
     right = { sf: sfAll[1] || null, qf: qfAll.slice(2, 4), r16: r16All.slice(4, 8), r32: r32All.slice(8, 16) };
@@ -170,7 +276,6 @@ function renderMatchCard(match, isFinal) {
     return `<div class="${rowClass}">${flagImg}<span class="bm-team-name">${dispName}</span>${ownerDot}${scoreHtml}</div>`;
   }
 
-  // Potential flags — both unresolved teams combined into one row, max 8 total
   function potentialFlags() {
     const t1 = res1 ? [] : getPotentialTeams(code1, standings, byNum, groupComplete);
     const t2 = res2 ? [] : getPotentialTeams(code2, standings, byNum, groupComplete);
@@ -251,8 +356,11 @@ function renderBracketPage() {
 
   renderOwnerLegend();
 
-  // Draw connector lines after DOM settles
-  requestAnimationFrame(() => requestAnimationFrame(drawLines));
+  // Draw connector lines, then auto-centre on first load
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    drawLines();
+    if (!hasCentred) { autoCenter(); hasCentred = true; }
+  }));
 }
 
 function renderEmptySlot() {
@@ -281,15 +389,18 @@ function drawLines() {
   ctx.strokeStyle = '#263d5e';
   ctx.lineWidth   = 1.5;
 
+  // Positions from getBoundingClientRect are in screen (scaled) space;
+  // divide by pan.scale to convert back to canvas local coordinates.
+  const s        = pan.scale;
   const wrapRect = wrap.getBoundingClientRect();
 
   function cardPos(el) {
     if (!el) return null;
     const r = el.getBoundingClientRect();
     return {
-      cy: r.top  + r.height / 2 - wrapRect.top,
-      lx: r.left - wrapRect.left,
-      rx: r.right - wrapRect.left,
+      cy: (r.top  + r.height / 2 - wrapRect.top)  / s,
+      lx: (r.left - wrapRect.left)                 / s,
+      rx: (r.right - wrapRect.left)                / s,
     };
   }
 
@@ -383,17 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Scroll hint — hide once user scrolls
-  const scrollArea = document.querySelector('.bracket-scroll');
-  const scrollHint = document.getElementById('scroll-hint');
-  if (scrollArea && scrollHint) {
-    scrollArea.addEventListener('scroll', function handler() {
-      if (scrollArea.scrollLeft > 20) {
-        scrollHint.classList.add('hidden');
-        scrollArea.removeEventListener('scroll', handler);
-      }
-    }, { passive: true });
-  }
+  initDragPan();
 
   window.addEventListener('resize', () => {
     requestAnimationFrame(() => requestAnimationFrame(drawLines));

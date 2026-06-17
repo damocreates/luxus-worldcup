@@ -6,6 +6,21 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.0] — 2026-06-16
+
+### Changed
+
+#### Bracket (`bracket.html`, `js/bracket.js`, `css/style.css`)
+- Replaced horizontal scroll with **drag-to-pan** navigation — click and drag to move the bracket canvas
+- Added **pinch-to-zoom** on mobile (two-finger gesture) and **scroll-wheel zoom** on desktop; scale clamped to 0.3 × – 1.5 ×
+- Bracket **auto-centres on first load** at the largest scale that fits the viewport width (≤ 1 ×)
+- Outer `.bracket-scroll` (overflow-x) replaced by `.bracket-viewport` (overflow: hidden) containing a `.bracket-inner` div; CSS transform: translate() scale() applied to `.bracket-inner`
+- Canvas connector lines corrected to remain accurate at any zoom level (positions divided by current scale before drawing)
+- Removed scroll-hint bar (no longer applicable)
+- `SLOT_PX` constant renamed `UNIT`; added `SCALE_MIN` / `SCALE_MAX` constants
+
+---
+
 ## [0.4.4] — 2026-06-16
 
 ### Changed

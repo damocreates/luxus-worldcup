@@ -382,7 +382,6 @@ footer a:hover { color: var(--text-dim); }
   display: flex;
   gap: 16px;
   margin-bottom: .5rem;
-  min-width: 2400px;
 }
 
 .bracket-round-header {
@@ -396,12 +395,26 @@ footer a:hover { color: var(--text-dim); }
   padding: .4rem 8px;
 }
 
-/* Bracket outer scroll wrapper — sole horizontal scroll container */
-.bracket-scroll {
-  overflow-x: auto;
-  overflow-y: clip;
-  padding-bottom: 1rem;
-  -webkit-overflow-scrolling: touch;
+/* Bracket viewport: fixed window that captures drag/zoom events */
+.bracket-viewport {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 130px);
+  min-height: 400px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.bracket-viewport.panning { cursor: grabbing; }
+
+/* Bracket inner: natural-size content, transformed for pan/zoom */
+.bracket-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 
 /* The main bracket grid */
@@ -409,7 +422,6 @@ footer a:hover { color: var(--text-dim); }
   display: flex;
   align-items: stretch;
   gap: 16px;
-  min-width: 2400px;
   position: relative;
 }
 
