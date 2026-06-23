@@ -6,6 +6,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.1] — 2026-06-23
+
+### Fixed
+
+#### Version display (all pages)
+- Service worker cache name updated from `luxus-wc-v0.4.3` to `luxus-wc-v0.5.1` — the stale cache name meant the SW was serving old cached copies of `version.js` (and all other static assets) on cache-first requests, so footer version numbers were stuck at a previous build; bumping the cache name forces the activate handler to delete the old cache and re-fetch all assets
+
+#### Group standings (`groups.html`)
+- Groups grid switched from `repeat(auto-fill, minmax(320px, 1fr))` to `repeat(2, 1fr)` on desktop — each group card is now wider and all columns have room to breathe
+- On mobile (≤ 768 px) the grid collapses to a single column
+- Table wrapped in a `.group-table-wrap` div with `overflow-x: auto` and `-webkit-overflow-scrolling: touch` — on narrow viewports the table scrolls horizontally within each card rather than truncating
+- `min-width: 480px` added to `.group-table` so all nine columns (Team, P, W, D, L, GF, GA, GD, Pts) are always fully visible
+- Team name column (`min-width: 160px`) no longer truncates — removed `overflow: hidden` / `text-overflow: ellipsis` / `white-space: nowrap` from `.gt-name`; `white-space: nowrap` kept so the name stays on one line rather than wrapping
+- Cell padding increased (`.gt-row td`: `.55rem .65rem`; `.gt-team`: `.55rem .65rem .55rem .85rem`) for more breathing room
+- Stat column width increased from `28px` to `36px` (`gt-num`, `gt-pts`) to accommodate two-digit values without crowding
+- Sweepstake owner badge remains visible alongside each team name — no structural changes to badge rendering
+
+---
+
 ## [0.5.0] — 2026-06-16
 
 ### Changed

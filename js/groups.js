@@ -137,22 +137,24 @@ function renderGroupTable(group) {
   return `
     <div class="group-block">
       <div class="group-block-title">${group}</div>
-      <table class="group-table">
-        <thead>
-          <tr>
-            <th class="gt-team-h">Team</th>
-            <th class="gt-num" title="Played">P</th>
-            <th class="gt-num" title="Won">W</th>
-            <th class="gt-num" title="Drawn">D</th>
-            <th class="gt-num" title="Lost">L</th>
-            <th class="gt-num" title="Goals For">GF</th>
-            <th class="gt-num" title="Goals Against">GA</th>
-            <th class="gt-num" title="Goal Difference">GD</th>
-            <th class="gt-pts" title="Points">Pts</th>
-          </tr>
-        </thead>
-        <tbody>${rowsHtml}</tbody>
-      </table>
+      <div class="group-table-wrap">
+        <table class="group-table">
+          <thead>
+            <tr>
+              <th class="gt-team-h">Team</th>
+              <th class="gt-num" title="Played">P</th>
+              <th class="gt-num" title="Won">W</th>
+              <th class="gt-num" title="Drawn">D</th>
+              <th class="gt-num" title="Lost">L</th>
+              <th class="gt-num" title="Goals For">GF</th>
+              <th class="gt-num" title="Goals Against">GA</th>
+              <th class="gt-num" title="Goal Difference">GD</th>
+              <th class="gt-pts" title="Points">Pts</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
     </div>`;
 }
 
