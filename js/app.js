@@ -4,11 +4,12 @@ const STAGE_ORDER = ['Group Stage', 'Round of 32', 'Round of 16', 'Quarter-final
 
 // Page state
 let appState = {
-  matches:    [],
-  standings:  {},
-  byNum:      {},
-  view:       'person',
-  search:     '',
+  matches:       [],
+  standings:     {},
+  byNum:         {},
+  groupComplete: {},
+  view:          'person',
+  search:        '',
 };
 
 // ── Status helpers ────────────────────────────────────────────────────────────
@@ -74,9 +75,10 @@ async function loadData(refresh = false) {
     showError('Live data fetch failed — showing last cached data.');
   }
 
-  appState.matches   = matches;
-  appState.standings = computeStandings(matches);
-  appState.byNum     = buildMatchIndex(matches);
+  appState.matches       = matches;
+  appState.standings     = computeStandings(matches);
+  appState.byNum         = buildMatchIndex(matches);
+  appState.groupComplete = computeGroupComplete(matches);
 
   if (!fromCache) {
     const ts = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -214,7 +216,8 @@ function renderPersonCard(person) {
 }
 
 function renderTeamSection(team, pts) {
-  const { matches, standings, byNum } = appState;
+  const { matches, standings, byNum, groupComplete } = appState;
+  const eliminated = isTeamEliminated(team, matches, standings, byNum, groupComplete);
   const flagUrl = getFlagUrl(team, '24x18');
   const flagImg = flagUrl ? `<img src="${flagUrl}" width="24" height="18" alt="${escHtml(team)}" loading="lazy">` : '';
   const owner   = TEAM_OWNER[team] || '';
@@ -235,7 +238,7 @@ function renderTeamSection(team, pts) {
   }
 
   return `
-    <div class="team-section">
+    <div class="team-section"${eliminated ? ' style="opacity:.45"' : ''}>
       <div class="team-section-header">
         ${flagImg}
         <span class="team-section-name">${escHtml(team)}</span>
@@ -285,7 +288,8 @@ function renderFixtureRow(match, isTeam1, _teamName) {
 // ── Team card ─────────────────────────────────────────────────────────────────
 
 function renderTeamCard(team) {
-  const { matches, standings, byNum } = appState;
+  const { matches, standings, byNum, groupComplete } = appState;
+  const eliminated = isTeamEliminated(team, matches, standings, byNum, groupComplete);
   const owner    = TEAM_OWNER[team] || '';
   const color    = owner ? PERSON_COLORS[owner] : '#6b82a0';
   const flagUrl  = getFlagUrl(team, '32x24');
@@ -310,7 +314,7 @@ function renderTeamCard(team) {
     <span class="owner-badge" style="color:${color};border-color:${color}40;background:${color}18">${escHtml(owner)}</span>` : '';
 
   return `
-    <div class="team-card" style="--accent:${color}">
+    <div class="team-card" style="--accent:${color};${eliminated ? 'opacity:.45;' : ''}">
       <div class="card-header">
         ${flagImg}
         <div class="card-title">

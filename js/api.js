@@ -337,19 +337,20 @@ function getTeamRecord(teamName, matches, standings, byNum) {
   return { wins, draws, losses };
 }
 
-function isTeamEliminated(teamName, matches, standings, byNum) {
+function isTeamEliminated(teamName, matches, standings, byNum, groupComplete = null) {
   for (const match of matches) {
     if (!KNOCKOUT_ROUNDS.includes(match.round)) continue;
-    const r1 = resolveTeam(match.team1, standings, byNum);
-    const r2 = resolveTeam(match.team2, standings, byNum);
+    const r1 = resolveTeam(match.team1, standings, byNum, groupComplete);
+    const r2 = resolveTeam(match.team2, standings, byNum, groupComplete);
     if (r1 !== teamName && r2 !== teamName) continue;
     if (!match.score || !match.score.ft) continue;
     if (getMatchResult(match, r1 === teamName) === 'loss') return true;
   }
-  for (const rows of Object.values(standings)) {
+  for (const [gKey, rows] of Object.entries(standings)) {
     const idx = rows.findIndex(r => r.team === teamName);
     if (idx < 0) continue;
-    if (rows.every(r => r.played >= 3) && idx >= 3) return true;
+    const groupDone = groupComplete != null ? groupComplete[gKey] : rows.every(r => r.played >= 3);
+    if (groupDone && idx >= 3) return true;
     break;
   }
   return false;

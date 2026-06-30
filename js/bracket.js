@@ -189,51 +189,27 @@ function isSlotResolved(code, standings, byNum, groupComplete) {
   return resolveTeam(code, standings, byNum, groupComplete) !== code;
 }
 
-function getMatchByCode(code, byNum) {
-  const m = String(code || '').match(/^W(\d+)$/i);
-  return m ? byNum[parseInt(m[1], 10)] : null;
-}
-
+// Build bracket halves from the fixed WC 2026 match-number structure (73–104).
+// This avoids parsing team1/team2 code strings, which the live data source
+// replaces with real team names once a slot is confirmed — breaking the old
+// code-string trace.
 function splitBracket(matches, standings, byNum) {
-  const final3rd = matches.find(m => m.round === 'Match for third place');
-  const finalM   = matches.find(m => m.round === 'Final');
-  const sfAll    = matches.filter(m => m.round === 'Semi-final');
-  const qfAll    = matches.filter(m => m.round === 'Quarter-final');
-  const r16All   = matches.filter(m => m.round === 'Round of 16');
-  const r32All   = matches.filter(m => m.round === 'Round of 32');
+  function pick(nums) { return nums.map(n => byNum[n]).filter(Boolean); }
 
-  function traceToMatch(code) {
-    return getMatchByCode(code, byNum);
-  }
+  const left  = {
+    sf:  byNum[101] || null,
+    qf:  pick([97, 98]),
+    r16: pick([89, 90, 91, 92]),
+    r32: pick([73, 74, 75, 76, 77, 78, 79, 80]),
+  };
+  const right = {
+    sf:  byNum[102] || null,
+    qf:  pick([99, 100]),
+    r16: pick([93, 94, 95, 96]),
+    r32: pick([81, 82, 83, 84, 85, 86, 87, 88]),
+  };
 
-  function buildHalf(sfMatch) {
-    if (!sfMatch) return { sf: null, qf: [], r16: [], r32: [] };
-    const qf1 = traceToMatch(sfMatch.team1);
-    const qf2 = traceToMatch(sfMatch.team2);
-    const qfs = [qf1, qf2].filter(Boolean);
-    const r16s = qfs.flatMap(q => q ? [traceToMatch(q.team1), traceToMatch(q.team2)].filter(Boolean) : []);
-    const r32s = r16s.flatMap(r => r ? [traceToMatch(r.team1), traceToMatch(r.team2)].filter(Boolean) : []);
-    return { sf: sfMatch, qf: qfs, r16: r16s, r32: r32s };
-  }
-
-  let leftSF = null, rightSF = null;
-  if (finalM) {
-    leftSF  = traceToMatch(finalM.team1);
-    rightSF = traceToMatch(finalM.team2);
-  }
-
-  if (!leftSF && sfAll.length >= 1) leftSF  = sfAll[0];
-  if (!rightSF && sfAll.length >= 2) rightSF = sfAll[1];
-
-  let left  = buildHalf(leftSF);
-  let right = buildHalf(rightSF);
-
-  if (!left.r32.length && r32All.length) {
-    left  = { sf: sfAll[0] || null, qf: qfAll.slice(0, 2), r16: r16All.slice(0, 4), r32: r32All.slice(0, 8) };
-    right = { sf: sfAll[1] || null, qf: qfAll.slice(2, 4), r16: r16All.slice(4, 8), r32: r32All.slice(8, 16) };
-  }
-
-  return { final: finalM, third: final3rd, left, right };
+  return { final: byNum[104] || null, third: byNum[103] || null, left, right };
 }
 
 // ── Match card HTML ───────────────────────────────────────────────────────────

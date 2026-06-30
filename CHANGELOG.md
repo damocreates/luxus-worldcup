@@ -6,6 +6,24 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.2] — 2026-06-30
+
+### Fixed
+
+#### Bracket lineage (`bracket.html`, `js/bracket.js`)
+- `splitBracket()` rebuilt around a static WC 2026 match-number map (73 → R32 … 104 → Final) instead of tracing `team1`/`team2` code strings — the live data source replaces codes such as `W73` with the confirmed team name once a slot is filled, causing the old string-based trace to return `null` and fall back to `r32All.slice(0, 8)` which does not reflect the real bracket structure; wrong teams were appearing in R16 and QF slots as a result
+- `getMatchByCode()` and the inner `traceToMatch`/`buildHalf` helpers removed; `isCode()` and `isSlotResolved()` retained for team-name display
+
+#### Eliminated teams greyed out (`index.html`, `dashboard.html`)
+- `isTeamEliminated()` (already correct in `js/api.js`) is now called from `renderTeamSection()` in `app.js` and `renderTeamCard()` in both `app.js` and `dashboard.js`; teams confirmed out (knockout loss, or 4th in a fully-played group) render at 45 % opacity — visible but visually de-emphasised
+- `isTeamEliminated()` signature extended to accept an optional `groupComplete` map; group-stage elimination now gates on the same `computeGroupComplete()` check used by the bracket rather than the legacy `rows.every(r => r.played >= 3)` inline check
+- `groupComplete` added to `appState` (tracker) and `dashState` (dashboard) and populated in each page's `loadData()`
+
+#### Service worker cache
+- Cache name bumped from `luxus-wc-v0.5.1` to `luxus-wc-v0.5.2` so the activate handler purges the old cache and re-fetches updated JS on next visit
+
+---
+
 ## [0.5.1] — 2026-06-23
 
 ### Fixed

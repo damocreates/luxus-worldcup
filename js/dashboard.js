@@ -3,11 +3,12 @@
 const STAGE_ORDER_DASH = ['Group Stage', 'Round of 32', 'Round of 16', 'Quarter-final', 'Semi-final', 'Final'];
 
 let dashState = {
-  person:    null,
-  matches:   [],
-  standings: {},
-  byNum:     {},
-  cacheTs:   0,
+  person:        null,
+  matches:       [],
+  standings:     {},
+  byNum:         {},
+  groupComplete: {},
+  cacheTs:       0,
 };
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -84,9 +85,10 @@ async function loadData(refresh = false) {
     showError('Live data fetch failed — showing last cached data.');
   }
 
-  dashState.matches   = matches;
-  dashState.standings = computeStandings(matches);
-  dashState.byNum     = buildMatchIndex(matches);
+  dashState.matches       = matches;
+  dashState.standings     = computeStandings(matches);
+  dashState.byNum         = buildMatchIndex(matches);
+  dashState.groupComplete = computeGroupComplete(matches);
 
   if (!fromCache) {
     const ts = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -138,7 +140,8 @@ function renderDashboard() {
 }
 
 function renderTeamCard(team) {
-  const { matches, standings, byNum } = dashState;
+  const { matches, standings, byNum, groupComplete } = dashState;
+  const eliminated = isTeamEliminated(team, matches, standings, byNum, groupComplete);
   const owner   = TEAM_OWNER[team] || '';
   const color   = owner ? PERSON_COLORS[owner] : '#6b82a0';
   const flagUrl = getFlagUrl(team, '32x24');
@@ -160,7 +163,7 @@ function renderTeamCard(team) {
   }
 
   return `
-    <div class="team-card" style="--accent:${color}">
+    <div class="team-card" style="--accent:${color};${eliminated ? 'opacity:.45;' : ''}">
       <div class="card-header">
         ${flagImg}
         <div class="card-title">
