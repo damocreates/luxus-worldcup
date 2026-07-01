@@ -189,27 +189,39 @@ function isSlotResolved(code, standings, byNum, groupComplete) {
   return resolveTeam(code, standings, byNum, groupComplete) !== code;
 }
 
-// Build bracket halves from the fixed WC 2026 match-number structure (73–104).
-// This avoids parsing team1/team2 code strings, which the live data source
-// replaces with real team names once a slot is confirmed — breaking the old
-// code-string trace.
+// Fixed WC 2026 bracket tree: each match number maps to the two match numbers
+// that feed it (verified against live openfootball data, match 73–104).
+// Using a tree avoids parsing team1/team2 code strings — the live data source
+// replaces "W73" with the real team name as soon as that slot is confirmed,
+// which broke the old string-based trace.
+const KNOCKOUT_TREE = {
+   89: [74, 77],  90: [73, 75],  91: [76, 78],  92: [79, 80],
+   93: [83, 84],  94: [81, 82],  95: [86, 88],  96: [85, 87],
+   97: [89, 90],  98: [93, 94],  99: [91, 92], 100: [95, 96],
+  101: [97, 98], 102: [99, 100],
+  103: [101, 102], // third place (losers of both semis)
+  104: [101, 102], // final
+};
+
 function splitBracket(matches, standings, byNum) {
-  function pick(nums) { return nums.map(n => byNum[n]).filter(Boolean); }
+  function buildHalf(sfNum) {
+    const [qf1, qf2] = KNOCKOUT_TREE[sfNum] || [];
+    const r16Nums    = [...(KNOCKOUT_TREE[qf1] || []), ...(KNOCKOUT_TREE[qf2] || [])];
+    const r32Nums    = r16Nums.flatMap(n => KNOCKOUT_TREE[n] || []);
+    return {
+      sf:  byNum[sfNum] || null,
+      qf:  [qf1, qf2].map(n => byNum[n]).filter(Boolean),
+      r16: r16Nums.map(n => byNum[n]).filter(Boolean),
+      r32: r32Nums.map(n => byNum[n]).filter(Boolean),
+    };
+  }
 
-  const left  = {
-    sf:  byNum[101] || null,
-    qf:  pick([97, 98]),
-    r16: pick([89, 90, 91, 92]),
-    r32: pick([73, 74, 75, 76, 77, 78, 79, 80]),
+  return {
+    final: byNum[104] || null,
+    third: byNum[103] || null,
+    left:  buildHalf(101),
+    right: buildHalf(102),
   };
-  const right = {
-    sf:  byNum[102] || null,
-    qf:  pick([99, 100]),
-    r16: pick([93, 94, 95, 96]),
-    r32: pick([81, 82, 83, 84, 85, 86, 87, 88]),
-  };
-
-  return { final: byNum[104] || null, third: byNum[103] || null, left, right };
 }
 
 // ── Match card HTML ───────────────────────────────────────────────────────────

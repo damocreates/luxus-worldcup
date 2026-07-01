@@ -51,65 +51,64 @@
 
 <main>
   <div class="container">
-
     <div class="status-bar">
       <span id="status-pill" class="status-pill status-loading">Loading…</span>
       <button id="refresh-btn" class="btn" title="Reload data from API">↻ Refresh</button>
       <button id="toggle-potentials" class="toggle-potentials-btn">Hide preview flags</button>
     </div>
-
     <div id="error-notice" class="error-notice hidden"></div>
+  </div><!-- /container — bracket-viewport is a full-width sibling so it isn't clipped by max-width:1440px -->
 
-    <div class="bracket-viewport" id="bracket-viewport">
-      <div class="bracket-inner" id="bracket-inner">
+  <div class="bracket-viewport" id="bracket-viewport">
+    <div class="bracket-inner" id="bracket-inner">
 
-      <!-- Round label headers — mirrors bracket-wrap column structure -->
-      <div class="bracket-round-headers" id="bracket-headers">
-        <div style="display:flex;flex:1;gap:40px">
-          <div class="bracket-round-header" style="flex:1">Round of 32</div>
-          <div class="bracket-round-header" style="flex:1">Round of 16</div>
-          <div class="bracket-round-header" style="flex:1">QF</div>
-          <div class="bracket-round-header" style="flex:1">SF</div>
-        </div>
-        <div class="bracket-round-header" style="flex:0 0 220px">Final</div>
-        <div style="display:flex;flex:1;gap:40px">
-          <div class="bracket-round-header" style="flex:1">SF</div>
-          <div class="bracket-round-header" style="flex:1">QF</div>
-          <div class="bracket-round-header" style="flex:1">Round of 16</div>
-          <div class="bracket-round-header" style="flex:1">Round of 32</div>
-        </div>
+    <!-- Round label headers — mirrors bracket-wrap column structure -->
+    <div class="bracket-round-headers" id="bracket-headers">
+      <div style="display:flex;flex:1;gap:40px">
+        <div class="bracket-round-header" style="flex:1">Round of 32</div>
+        <div class="bracket-round-header" style="flex:1">Round of 16</div>
+        <div class="bracket-round-header" style="flex:1">QF</div>
+        <div class="bracket-round-header" style="flex:1">SF</div>
+      </div>
+      <div class="bracket-round-header" style="flex:0 0 220px">Final</div>
+      <div style="display:flex;flex:1;gap:40px">
+        <div class="bracket-round-header" style="flex:1">SF</div>
+        <div class="bracket-round-header" style="flex:1">QF</div>
+        <div class="bracket-round-header" style="flex:1">Round of 16</div>
+        <div class="bracket-round-header" style="flex:1">Round of 32</div>
+      </div>
+    </div>
+
+    <!-- Bracket grid -->
+    <div class="bracket-wrap" id="bracket-wrap">
+      <canvas id="bracket-canvas"></canvas>
+
+      <!-- Left half: R32 → R16 → QF → SF -->
+      <div class="bracket-half bracket-left">
+        <div class="bracket-round-col" id="left-r32"></div>
+        <div class="bracket-round-col" id="left-r16"></div>
+        <div class="bracket-round-col" id="left-qf"></div>
+        <div class="bracket-round-col" id="left-sf"></div>
       </div>
 
-      <!-- Bracket grid -->
-      <div class="bracket-wrap" id="bracket-wrap">
-        <canvas id="bracket-canvas"></canvas>
+      <!-- Centre: Final + 3rd place -->
+      <div class="bracket-center" id="bracket-center"></div>
 
-        <!-- Left half: R32 → R16 → QF → SF -->
-        <div class="bracket-half bracket-left">
-          <div class="bracket-round-col" id="left-r32"></div>
-          <div class="bracket-round-col" id="left-r16"></div>
-          <div class="bracket-round-col" id="left-qf"></div>
-          <div class="bracket-round-col" id="left-sf"></div>
-        </div>
-
-        <!-- Centre: Final + 3rd place -->
-        <div class="bracket-center" id="bracket-center"></div>
-
-        <!-- Right half: SF (closest to centre) → QF → R16 → R32 (far right) -->
-        <div class="bracket-half bracket-right">
-          <div class="bracket-round-col" id="right-sf"></div>
-          <div class="bracket-round-col" id="right-qf"></div>
-          <div class="bracket-round-col" id="right-r16"></div>
-          <div class="bracket-round-col" id="right-r32"></div>
-        </div>
+      <!-- Right half: SF (closest to centre) → QF → R16 → R32 (far right) -->
+      <div class="bracket-half bracket-right">
+        <div class="bracket-round-col" id="right-sf"></div>
+        <div class="bracket-round-col" id="right-qf"></div>
+        <div class="bracket-round-col" id="right-r16"></div>
+        <div class="bracket-round-col" id="right-r32"></div>
       </div>
+    </div>
 
-      </div><!-- /bracket-inner -->
-    </div><!-- /bracket-viewport -->
+    </div><!-- /bracket-inner -->
+  </div><!-- /bracket-viewport -->
 
-    <!-- Owner legend -->
+  <!-- Owner legend back inside a container so it respects the normal max-width -->
+  <div class="container">
     <div id="owner-legend" class="owner-legend" style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.5rem;"></div>
-
   </div>
 </main>
 

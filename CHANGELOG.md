@@ -6,6 +6,26 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.3] — 2026-06-30
+
+### Fixed
+
+#### Bracket lineage (`js/bracket.js`)
+- `splitBracket()` rewritten using a verified `KNOCKOUT_TREE` constant that maps each knockout match number to the two match numbers that feed it (confirmed against live openfootball data) — the v0.5.2 approach still used fixed arrays of match numbers that assumed R32 matches 73–80 are all on the left half and 81–88 on the right, which is wrong: the actual draw has them interleaved (e.g. match 81 feeds R16-94 which feeds QF-98 which feeds SF-101, so it belongs on the left half)
+- The v0.5.2 approach also didn't fix `buildHalf()` — it fell back to the same wrong grouping once live data replaced `W73` codes with real team names; the new `buildHalf(sfNum)` expands the tree structurally (SF → QF → R16 → R32), so each round's array is in the pair-order that the canvas connector lines expect, regardless of what the team1/team2 fields contain
+- `KNOCKOUT_TREE` verified against live data: match 90 already carries `team1=Canada` (not `W73`) confirming the original bug is live
+
+#### Bracket clipping on wide viewports (`bracket.html`)
+- `.bracket-viewport` moved out of the `max-width: 1440px` `.container` div so it spans the full browser width edge-to-edge — previously, on any screen wider than 1440 px, the pan/zoom canvas was confined to a 1440 px centred box and content outside it was clipped by `overflow: hidden`
+- The status bar and toggle buttons above the bracket, and the owner legend below it, remain wrapped in `.container` and stay at normal max-width; only the viewport itself becomes a full-width sibling under `<main>`
+- No CSS changes — `width: 100%` on `.bracket-viewport` already expresses full width; it was constrained purely by being inside `.container`
+- Mobile layout (≤ 768 px) unaffected — the viewport was already narrower than any container constraint at mobile sizes
+
+#### Service worker cache
+- Cache name bumped from `luxus-wc-v0.5.2` to `luxus-wc-v0.5.3`
+
+---
+
 ## [0.5.2] — 2026-06-30
 
 ### Fixed
